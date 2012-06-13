@@ -27,6 +27,10 @@
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
+#ifndef V4L2_PIX_FMT_H264
+#define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264 with start codes */
+#endif
+
 enum io_method {
         IO_METHOD_READ,
         IO_METHOD_MMAP,
@@ -45,7 +49,8 @@ struct buffer          *buffers;
 static unsigned int     n_buffers;
 static int              out_buf;
 static int              force_format;
-static int              frame_count = 70;
+static int              frame_count = 200;
+static int              frame_number = 0;
 
 static void errno_exit(const char *s)
 {
@@ -66,12 +71,16 @@ static int xioctl(int fh, int request, void *arg)
 
 static void process_image(const void *p, int size)
 {
-        if (out_buf)
-                fwrite(p, size, 1, stdout);
+        frame_number++;
+        char filename[15];
+        sprintf(filename, "frame-%d.raw", frame_number);
+        FILE *fp=fopen(filename,"wb");
 
-        fflush(stderr);
-        fprintf(stderr, ".");
-        fflush(stdout);
+        if (out_buf)
+                fwrite(p, size, 1, fp);
+
+        fflush(fp);
+        fclose(fp);
 }
 
 static int read_frame(void)
@@ -483,10 +492,11 @@ static void init_device(void)
 
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         if (force_format) {
-                fmt.fmt.pix.width       = 640;
-                fmt.fmt.pix.height      = 480;
-                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-                fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
+	fprintf(stderr, "Set H264\r\n");
+                fmt.fmt.pix.width       = 640; //replace
+                fmt.fmt.pix.height      = 480; //replace
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_H264; //replace
+                fmt.fmt.pix.field       = V4L2_FIELD_ANY;
 
                 if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
                         errno_exit("VIDIOC_S_FMT");
