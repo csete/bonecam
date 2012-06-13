@@ -583,7 +583,7 @@ static void usage(FILE *fp, int argc, char **argv)
 	        "-r | --read          Use read() calls\n"
 	        "-u | --userp         Use application allocated buffers\n"
 	        "-o | --output        Outputs stream to stdout\n"
-	        "-f | --format        Force format to 640x480 YUYV\n"
+	        "-f | --format        Force format to 640x480 H264\n"
 	        "-c | --count         Number of frames to grab [%i]\n"
 	        "",
 	        argv[0], dev_name, frame_count);
