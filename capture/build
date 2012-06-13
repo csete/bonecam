@@ -1,2 +1,2 @@
 gcc -O2 -Wall `pkg-config --cflags --libs libv4l2` capture.c -o capture
-
+# gcc -O2 -Wall -marm -mfloat-abi=softfp `pkg-config --cflags --libs libv4l2` capture.c -o capture
