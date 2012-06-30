@@ -1,2 +1,17 @@
-../capture/capture -c 10000000 -o | gst-launch -v -e filesrc location=/dev/fd/0 ! h264parse ! rtph264pay ! udpsink  host=192.168.254.22 port=4000
+#!/bin/bash
+
+usage ()
+{
+    echo "Usage:  server <viewer_ip> <viewer_port>"
+}
+
+
+if [ $# -ne 2 ]; then
+    usage
+    exit 0
+fi
+
+echo "Starting streaming server to $1:$2"
+
+../capture/capture -c 10000000 -o | gst-launch -v -e filesrc location=/dev/fd/0 ! h264parse ! rtph264pay ! udpsink  host=$1 port=$2
 
