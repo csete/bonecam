@@ -338,7 +338,7 @@ static void stop_camera()
 }
 
 /* Set camera parameter (see v4l2-ctl -l) */
-static void set_camera_ctrl(const char *ctl, int val)
+static void set_camera_ctl(const char *ctl, int val)
 {
     int rc;
     char cmd[100];
