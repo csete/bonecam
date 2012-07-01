@@ -1,2 +1,2 @@
-camctl is the command line interface for controlling the camera. This inscludes v4l2 serttings as well as pan/tilt/zoom.
+camctl is the command line interface for controlling the camera. This inscludes v4l2 settings as well as pan/tilt/zoom.
 
