@@ -294,11 +294,11 @@ static void init_camera(unsigned int w, unsigned int h, unsigned int fps)
     sprintf(cmd,"v4l2-ctl --set-fmt-video=width=%u,height=%u,pixelformat=1",
             w, h);
     rc = system(cmd);
-    printf("  Set frame size: %s\n", rc ? "Ok" : "Not ok");
+    printf("  Set frame size: %s\n", rc ? "Not ok" : "Ok");
 
-    sprintf(cmd, "--set-parm=%u", fps);
+    sprintf(cmd, "v4l2-ctl --set-parm=%u", fps);
     rc = system(cmd);
-    printf("  Set frame rate: %s\n", rc ? "Ok" : "Not ok");
+    printf("  Set frame rate: %s\n", rc ? "Not ok" : "Ok");
 }
 
 /* satart camera by forking the server process */
