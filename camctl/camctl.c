@@ -1,6 +1,7 @@
 /* Simple bonecam control interface. */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define DEFAULT_TTY       "/dev/ttyO1"
 #define DEFAULT_CLIENT    "romit"
@@ -27,8 +28,125 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    init_servos();
+    /* first check whether we have init/start/stop */
+    if (!strcmp(argv[1], "init"))
+    {
+        printf("cam init not implemented\n");
 
+        //init_camera();
+        init_servos();
+
+        goto done;
+    }
+    else if (!strcmp(argv[1], "start"))
+    {
+        switch (argc)
+        {
+        case 2:
+            /* Use default IP and port */
+            break;
+        case 3:
+            /* IP given; use default port */
+            break;
+        case 4:
+            /* both IP and port givem */
+            break;
+        default:
+            show_help();
+            break;
+        }
+        printf("cam start not implemented\n");
+        goto done;
+    }
+    else if (!strcmp(argv[1], "stop"))
+    {
+        printf("cam stop not implemented\n");
+        goto done;
+    }
+    else if (!strcmp(argv[1], "status"))
+    {
+        printf("cam status not implemented\n");
+        goto done;
+    }
+
+    char *s = argv[1];
+
+    switch (*s)
+    {
+    case 'p':
+        switch (*++s)
+        {
+        case 0:
+            if (argc < 4)
+            {
+                show_help();
+            }
+            else
+            {
+                set_angle(AZI, atoi(argv[2]));
+                set_angle(ELE, atoi(argv[3]));
+            }
+            break;
+        case 'a':
+            if (argc < 3)
+                show_help();
+            else
+                set_angle(AZI, atoi(argv[2]));
+            break;
+        case 'e':
+            if (argc < 3)
+                show_help();
+            else
+                set_angle(ELE, atoi(argv[2]));
+            break;
+        default:
+            show_help();
+            goto done;
+        }
+        break;
+
+    case 's':
+        switch (*++s)
+        {
+        case 'a':
+            printf("sa not implemented\n");
+            break;
+        case 'e':
+            printf("se not implemented\n");
+            break;
+        case 0:
+            printf("s not implemented\n");
+            break;
+        default:
+            show_help();
+            goto done;
+        }
+        break;
+
+    case 'm':
+        switch (*++s)
+        {
+        case 'a':
+            printf("ma not implemented\n");
+            break;
+        case 'e':
+            printf("me not implemented\n");
+            break;
+        case 0:
+            printf("m not implemented\n");
+            break;
+        default:
+            show_help();
+            goto done;
+        }
+        break;
+
+    default:
+        show_help();
+        break;
+    }
+
+done:
     return 0;
 }
 
@@ -94,10 +212,7 @@ static void write_tty(const char *tty, const char *data, int len)
         printf("Error opening %s\n", tty);
         return;
     }
-
-    //fputs(data, fp);
     fwrite(data, 1, len, fp);
-
     fclose(fp);
 }
 
@@ -109,17 +224,22 @@ static void show_help()
         "\n"
         "Usage: cam command <param1> <param2> ...\n"
         "\n"
-        "  cam init\n"
-        "  cam start\n"
-        "  cam stop\n"
+        "  cam init  [w] [h] [fps]  Initialize camera\n"
+        "  cam start [ip] [port]    Start streaming\n"
+        "  cam stop                 Stop streaming\n"
+        "  cam status               Show camera status\n"
         "\n"
-        "  cam p  <int> <int>    Set azi and ele angles\n"
-        "  cam pa <int>          Set azi angle ±90 deg\n"
-        "  cam pe <int>          Set ele angle\n"
+        "  cam p  <azi> <ele>       Set azi and ele angles\n"
+        "  cam pa <azi>             Set azi angle\n"
+        "  cam pe <ele>             Set ele angle\n"
         "\n"
-        "  cam s  <int> <int>    Set azi and ele rotation speeds\n"
-        "  cam sa <int>          Set azi rotation speed\n"
-        "  cam se <int>          Set ele rotation speed\n"
+        "  cam s  <spa> <spe>       Set azi and ele rotation speeds\n"
+        "  cam sa <sp>              Set azi rotation speed\n"
+        "  cam se <sp>              Set ele rotation speed\n"
+        "\n"
+        "  cam m  <azi> <ele> <sp>  Move to pos. (azi,ele) at speed sp\n"
+        "  cam ma <azi> <sp>\n"
+        "  cam me <ele> <sp>\n"
     };
 
     printf("%s\n", help_msg);
