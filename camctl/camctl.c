@@ -2,18 +2,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
 
 /* defaults */
 #define DEFAULT_TTY       "/dev/ttyO1"
 #define DEFAULT_CLIENT    "romit"
 #define DEFAULT_PORT      "4000"
+#define DEFAULT_WIDTH     640
+#define DEFAULT_HEIGHT    480
+#define DEFAULT_FPS       24
 
 /* servo numbers */
 #define AZI 0
 #define ELE 1
 
+#define SERVER_STR "/home/root/bonecam.git/scripts/server"
+
 
 static void init_servos();
+static void init_camera(unsigned int w, unsigned int h, unsigned int fps);
+static void start_camera(const char *client, const char *port);
 static void set_speed(int servo, int speed);
 static void set_angle(int servo, int angle);
 static void write_tty(const char *tty, const char *data, int len);
@@ -22,6 +31,7 @@ static void show_help();
 
 int main(int argc, char *argv[])
 {
+    int rc=0;
 
     if (argc == 1)
     {
@@ -32,9 +42,20 @@ int main(int argc, char *argv[])
     /* first check whether we have init/start/stop */
     if (!strcmp(argv[1], "init"))
     {
-        printf("cam init not implemented\n");
+        int w = DEFAULT_WIDTH;
+        int h = DEFAULT_HEIGHT;
+        int fps = DEFAULT_FPS;
 
-        //init_camera();
+        if (argc > 2)
+            w = atoi(argv[2]);
+
+        if (argc > 3)
+            h = atoi(argv[3]);
+
+        if (argc > 4)
+            fps = atoi(argv[4]);
+
+        init_camera(w, h, fps);
         init_servos();
 
         goto done;
@@ -45,12 +66,15 @@ int main(int argc, char *argv[])
         {
         case 2:
             /* Use default IP and port */
+            start_camera(DEFAULT_CLIENT, DEFAULT_PORT);
             break;
         case 3:
             /* IP given; use default port */
+            start_camera(argv[2], DEFAULT_PORT);
             break;
         case 4:
             /* both IP and port givem */
+            start_camera(argv[2], argv[3]);
             break;
         default:
             show_help();
@@ -61,7 +85,8 @@ int main(int argc, char *argv[])
     }
     else if (!strcmp(argv[1], "stop"))
     {
-        printf("cam stop not implemented\n");
+        /* This should kill everything */
+        rc = system("pkill capture");
         goto done;
     }
     else if (!strcmp(argv[1], "status"))
@@ -189,7 +214,7 @@ int main(int argc, char *argv[])
     }
 
 done:
-    return 0;
+    return rc;
 }
 
 /* Initialise servo interface and controller */
@@ -256,6 +281,47 @@ static void write_tty(const char *tty, const char *data, int len)
     }
     fwrite(data, 1, len, fp);
     fclose(fp);
+}
+
+/* Initialise camera to given frame size and frame rate */
+static void init_camera(unsigned int w, unsigned int h, unsigned int fps)
+{
+    int rc;
+    char cmd[100];
+
+    printf("Initialising camera to %ux%u @ %u fps\n", w, h, fps);
+
+    sprintf(cmd,"v4l2-ctl --set-fmt-video=width=%u,height=%u,pixelformat=1",
+            w, h);
+    rc = system(cmd);
+    printf("  Set frame size: %s\n", rc ? "Ok" : "Not ok");
+
+    sprintf(cmd, "--set-parm=%u", fps);
+    rc = system(cmd);
+    printf("  Set frame rate: %s\n", rc ? "Ok" : "Not ok");
+}
+
+/* satart camera by forking the server process */
+static void start_camera(const char *client, const char *port)
+{
+    pid_t pid = vfork();
+
+    if (pid < 0)
+    {
+        /* failed */
+        printf("Failed to fork camera server\n");
+    }
+    else if (pid == 0)
+    {
+        /* child */
+        execl(SERVER_STR, "camctl", client, port, NULL);
+    }
+    else
+    {
+        /* parent */
+        printf("Camera server started. Streaming to %s:%s\n",
+                client, port);
+    }
 }
 
 
