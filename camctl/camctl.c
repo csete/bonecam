@@ -17,12 +17,14 @@
 #define AZI 0
 #define ELE 1
 
-#define SERVER_STR "/home/root/bonecam.git/scripts/server"
+#define SERVER_STR "/home/root/bin/server"
 
 
 static void init_servos();
 static void init_camera(unsigned int w, unsigned int h, unsigned int fps);
 static void start_camera(const char *client, const char *port);
+static void stop_camera();
+static void set_camera_ctl(const char *param, int val);
 static void set_speed(int servo, int speed);
 static void set_angle(int servo, int angle);
 static void write_tty(const char *tty, const char *data, int len);
@@ -85,8 +87,7 @@ int main(int argc, char *argv[])
     }
     else if (!strcmp(argv[1], "stop"))
     {
-        /* This should kill everything */
-        rc = system("pkill capture");
+        stop_camera();
         goto done;
     }
     else if (!strcmp(argv[1], "status"))
@@ -291,14 +292,19 @@ static void init_camera(unsigned int w, unsigned int h, unsigned int fps)
 
     printf("Initialising camera to %ux%u @ %u fps\n", w, h, fps);
 
+    /* frame size and format */
     sprintf(cmd,"v4l2-ctl --set-fmt-video=width=%u,height=%u,pixelformat=1",
             w, h);
     rc = system(cmd);
     printf("  Set frame size: %s\n", rc ? "Not ok" : "Ok");
 
+    /* frame rate */
     sprintf(cmd, "v4l2-ctl --set-parm=%u", fps);
     rc = system(cmd);
     printf("  Set frame rate: %s\n", rc ? "Not ok" : "Ok");
+
+    set_camera_ctl("power_line_frequency", 1);
+    set_camera_ctl("zoom_absolute", 100);
 }
 
 /* satart camera by forking the server process */
@@ -324,6 +330,23 @@ static void start_camera(const char *client, const char *port)
     }
 }
 
+/* stop camera */
+static void stop_camera()
+{
+    /* This should kill everything */
+    rc = system("pkill capture");
+}
+
+/* Set camera parameter (see v4l2-ctl -l) */
+static void set_camera_ctrl(const char *ctl, int val)
+{
+    int rc;
+    char cmd[100];
+
+    sprintf(cmd, "v4l2-ctl --set-ctrl=%s=%d", ctl, val);
+    rc = system(cmd);
+    printf("  Set camera ctrl: %s\n", rc ? "Not ok" : "Ok");
+}
 
 /* Show help text. */
 static void show_help()
@@ -348,6 +371,10 @@ static void show_help()
         "  cam m  <azi> <ele> <sp>  Move to pos. (azi,ele) at speed sp\n"
         "  cam ma <azi> <sp>        Move to azi at speed sp\n"
         "  cam me <ele> <sp>        Move to ele at speed sp\n"
+        "\n"
+        "  cam v                    Video options\n"
+        "  cam vs <width> <height>  Set video frame size\n"
+        "  cam vr <fps>             Set video frame rate for fps.\n"
     };
 
     printf("%s\n", help_msg);
