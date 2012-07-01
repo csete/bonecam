@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* defaults */
 #define DEFAULT_TTY       "/dev/ttyO1"
 #define DEFAULT_CLIENT    "romit"
 #define DEFAULT_PORT      "4000"
@@ -69,6 +70,7 @@ int main(int argc, char *argv[])
         goto done;
     }
 
+    /* now check for p, s, m ... commands */
     char *s = argv[1];
 
     switch (*s)
@@ -108,14 +110,28 @@ int main(int argc, char *argv[])
     case 's':
         switch (*++s)
         {
+        case 0:
+            if (argc < 4)
+            {
+                show_help();
+            }
+            else
+            {
+                set_speed(AZI, atoi(argv[2]));
+                set_speed(ELE, atoi(argv[3]));
+            }
+            break;
         case 'a':
-            printf("sa not implemented\n");
+            if (argc < 3)
+                show_help();
+            else
+                set_speed(AZI, atoi(argv[2]));
             break;
         case 'e':
-            printf("se not implemented\n");
-            break;
-        case 0:
-            printf("s not implemented\n");
+            if (argc < 3)
+                show_help();
+            else
+                set_speed(ELE, atoi(argv[2]));
             break;
         default:
             show_help();
@@ -126,14 +142,40 @@ int main(int argc, char *argv[])
     case 'm':
         switch (*++s)
         {
+        case 0:
+            if (argc < 5)
+            {
+                show_help();
+            }
+            else
+            {
+                set_speed(AZI, atoi(argv[4]));
+                set_speed(ELE, atoi(argv[4]));
+                set_angle(AZI, atoi(argv[2]));
+                set_angle(ELE, atoi(argv[3]));
+            }
+            break;
         case 'a':
-            printf("ma not implemented\n");
+            if (argc < 4)
+            {
+                show_help();
+            }
+            else
+            {
+                set_speed(AZI, atoi(argv[3]));
+                set_angle(AZI, atoi(argv[2]));
+            }
             break;
         case 'e':
-            printf("me not implemented\n");
-            break;
-        case 0:
-            printf("m not implemented\n");
+            if (argc < 4)
+            {
+                show_help();
+            }
+            else
+            {
+                set_speed(ELE, atoi(argv[3]));
+                set_angle(ELE, atoi(argv[2]));
+            }
             break;
         default:
             show_help();
@@ -238,8 +280,8 @@ static void show_help()
         "  cam se <sp>              Set ele rotation speed\n"
         "\n"
         "  cam m  <azi> <ele> <sp>  Move to pos. (azi,ele) at speed sp\n"
-        "  cam ma <azi> <sp>\n"
-        "  cam me <ele> <sp>\n"
+        "  cam ma <azi> <sp>        Move to azi at speed sp\n"
+        "  cam me <ele> <sp>        Move to ele at speed sp\n"
     };
 
     printf("%s\n", help_msg);
