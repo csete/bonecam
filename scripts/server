@@ -13,5 +13,5 @@ fi
 
 echo "Starting streaming server to $1:$2"
 
-../capture/capture -c 10000000 -o | gst-launch -v -e filesrc location=/dev/fd/0 ! h264parse ! rtph264pay ! udpsink  host=$1 port=$2
+../capture/capture -c 10000000 -o | gst-launch -v -e filesrc location=/dev/fd/0 ! legacyh264parse ! rtph264pay ! udpsink  host=$1 port=$2
 
