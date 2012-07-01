@@ -335,6 +335,7 @@ static void stop_camera()
 {
     /* This should kill everything */
     int rc = system("pkill capture");
+    printf("Stop camera: %s\n", rc ? "Not ok" : "Ok");
 }
 
 /* Set camera parameter (see v4l2-ctl -l) */
