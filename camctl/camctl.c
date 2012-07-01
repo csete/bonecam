@@ -14,7 +14,7 @@
 static void init_servos();
 static void set_speed(int servo, int speed);
 static void set_angle(int servo, int angle);
-static void write_tty(const char *tty, const char *data);
+static void write_tty(const char *tty, const char *data, int len);
 static void show_help();
 
 
@@ -72,7 +72,7 @@ static void set_angle(int servo, int angle)
     data2 = (angle * 127) / 90;
 
     sprintf(cmd, "%c%c%c%c%c%c", 0x80, 0x01, 0x03, servo, data1, data2);
-    write_tty(DEFAULT_TTY, cmd);
+    write_tty(DEFAULT_TTY, cmd, 6);
 }
 
 /* Set servo speed 0..15 */
@@ -80,11 +80,11 @@ static void set_speed(int servo, int speed)
 {
     char cmd[6];
     sprintf(cmd, "%c%c%c%c%c", 0x80, 0x01, 0x01, servo, speed);
-    write_tty(DEFAULT_TTY, cmd);
+    write_tty(DEFAULT_TTY, cmd, 5);
 }
 
 /* Write data to character device. */
-static void write_tty(const char *tty, const char *data)
+static void write_tty(const char *tty, const char *data, int len)
 {
     /* note: data must be 0-terminated */
     FILE *fp = fopen(tty, "w");
@@ -95,7 +95,9 @@ static void write_tty(const char *tty, const char *data)
         return;
     }
 
-    fputs(data, fp);
+    //fputs(data, fp);
+    fwrite(data, 1, len, fp);
+
     fclose(fp);
 }
 
