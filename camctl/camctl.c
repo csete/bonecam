@@ -334,7 +334,7 @@ static void start_camera(const char *client, const char *port)
 static void stop_camera()
 {
     /* This should kill everything */
-    rc = system("pkill capture");
+    int rc = system("pkill capture");
 }
 
 /* Set camera parameter (see v4l2-ctl -l) */
