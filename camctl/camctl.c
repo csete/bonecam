@@ -346,7 +346,8 @@ static void set_camera_ctl(const char *ctl, int val)
 
     sprintf(cmd, "v4l2-ctl --set-ctrl=%s=%d", ctl, val);
     rc = system(cmd);
-    printf("  Set camera ctrl: %s\n", rc ? "Not ok" : "Ok");
+    printf("  Set camera ctrl (%s=%d): %s\n",
+           ctl, val,rc ? "Not ok" : "Ok");
 }
 
 /* Show help text. */
