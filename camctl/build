@@ -1,0 +1,14 @@
+#!/bin/bash
+
+bld="TARGET"
+
+if [ $# -eq 1 ] && [ "$1" == "host" ]; then
+    bld="HOST"
+fi
+
+if [ $bld == "HOST" ]; then
+    gcc -O2 -Wall `pkg-config --cflags --libs libv4l2` camctl.c -o cam
+else
+    gcc -O2 -Wall -marm -mfloat-abi=softfp `pkg-config --cflags --libs libv4l2` camctl.c -o cam
+fi
+
