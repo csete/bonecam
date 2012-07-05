@@ -7,17 +7,17 @@
 
 /* defaults */
 #define DEFAULT_TTY       "/dev/ttyO1"
-#define DEFAULT_CLIENT    "romit"
+#define DEFAULT_CLIENT    "mixer"
 #define DEFAULT_PORT      "4000"
-#define DEFAULT_WIDTH     640
-#define DEFAULT_HEIGHT    480
+#define DEFAULT_WIDTH     1024
+#define DEFAULT_HEIGHT    576
 #define DEFAULT_FPS       24
 
 /* servo numbers */
 #define AZI 0
 #define ELE 1
 
-#define SERVER_STR "/home/root/bin/server"
+#define VIDEO_SERVER_CMD "/home/root/bin/video-server"
 
 
 static void init_servos();
@@ -320,7 +320,7 @@ static void start_camera(const char *client, const char *port)
     else if (pid == 0)
     {
         /* child */
-        execl(SERVER_STR, "camctl", client, port, NULL);
+        execl(VIDEO_SERVER_CMD, "camctl", client, port, NULL);
     }
     else
     {
