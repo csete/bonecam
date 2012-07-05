@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#
+# Streams 24 kHz stereo from the C920 camera. At this rate the Beaglebone
+# CPU load will stay at acceptable level.
+#
+
+usage ()
+{
+    echo "Usage:  audio-server <viewer_ip> <viewer_port>"
+}
+
+
+if [ $# -ne 2 ]; then
+    usage
+    exit 0
+fi
+
+echo "Starting audio streaming server to $1:$2"
+
+gst-launch -v -e alsasrc ! audio/x-raw-int,signed=true,rate=24000,channels=2 ! audioconvert ! vorbisenc ! rtpvorbispay ! udpsink host=$1 port=$2
+
