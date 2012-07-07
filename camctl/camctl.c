@@ -344,6 +344,7 @@ static void set_camera_ctl(const char *ctl, int val)
 static void show_help()
 {
     const char *help_msg = {
+        "Bonecam controller built on " __DATE__ "  " __TIME__ "\n"
         "\n"
         "Usage: cam command <param1> <param2> ...\n"
         "\n"
