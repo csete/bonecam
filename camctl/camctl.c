@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-
 
 /* defaults */
 #define DEFAULT_TTY       "/dev/ttyO1"
@@ -18,7 +16,6 @@
 #define ELE 1
 
 #define VIDEO_SERVER_CMD "/home/root/bin/video-server"
-
 
 static void init_servos();
 static void init_camera(unsigned int w, unsigned int h, unsigned int fps);
@@ -307,27 +304,20 @@ static void init_camera(unsigned int w, unsigned int h, unsigned int fps)
     set_camera_ctl("zoom_absolute", 100);
 }
 
-/* satart camera by forking the server process */
+/* satart camera server process */
 static void start_camera(const char *client, const char *port)
 {
-    pid_t pid = vfork();
+    char cmd[250];
+    int rc;
+    
+    /* create command that will detach from current PTS */
+    sprintf(cmd, "%s %s %s > /dev/null 2>&1 < /dev/null &",
+            VIDEO_SERVER_CMD, client, port);
 
-    if (pid < 0)
-    {
-        /* failed */
-        printf("Failed to fork camera server\n");
-    }
-    else if (pid == 0)
-    {
-        /* child */
-        execl(VIDEO_SERVER_CMD, "camctl", client, port, NULL);
-    }
-    else
-    {
-        /* parent */
-        printf("Camera server started. Streaming to %s:%s\n",
-                client, port);
-    }
+    rc = system(cmd);
+    printf("Start video streaming to %s:%s : %s\n", client, port,
+           rc ? "Not ok" : "Ok");
+
 }
 
 /* stop camera */
