@@ -79,7 +79,6 @@ int main(int argc, char *argv[])
             show_help();
             break;
         }
-        printf("cam start not implemented\n");
         goto done;
     }
     else if (!strcmp(argv[1], "stop"))
