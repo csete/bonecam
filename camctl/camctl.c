@@ -21,7 +21,8 @@ static void init_servos();
 static void init_camera(unsigned int w, unsigned int h, unsigned int fps);
 static void start_camera(const char *client, const char *port);
 static void stop_camera();
-static void set_camera_ctl(const char *param, int val);
+static void get_camera_ctl(const char *ctl);
+static void set_camera_ctl(const char *ctl, int val);
 static void set_speed(int servo, int speed);
 static void set_angle(int servo, int angle);
 static void write_tty(const char *tty, const char *data, int len);
@@ -337,6 +338,18 @@ static void set_camera_ctl(const char *ctl, int val)
     rc = system(cmd);
     printf("  Set camera ctrl (%s=%d): %s\n",
            ctl, val,rc ? "Not ok" : "Ok");
+}
+
+/* Get camera parameter (see v4l2-ctl -l) */
+static void get_camera_ctl(const char *ctl)
+{
+    int rc;
+    char cmd[100];
+
+    sprintf(cmd, "v4l2-ctl --get-ctrl=%s", ctl);
+    rc = system(cmd);
+    if (rc)
+		printf("Get camera ctrl (%s): Not ok\n");
 }
 
 /* Show help text. */
