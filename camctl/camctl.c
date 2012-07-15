@@ -38,6 +38,7 @@ static v4l2ctl_t ctltab[] = {
     { 'l', "power_line_frequency", 0, 2, 1, 1, NULL, 0, 0},
     { 'g', "gain", 0, 255, 1, 0, NULL, 0, 0 },
     { 'x', "exposure_auto_priority", 0, 1, 1, 1, NULL, 0, 0},
+    { 'z', "zoom_absolute", 100, 500, 1, 100, NULL, 0, 0},
     { 'w', "white_balance_temperature", 2000, 6500, 1, 4000, "white_balance_temperature_auto", 0, 1},
     { 'f', "focus_absolute", 0, 250, 5, 0, "focus_auto", 0, 1},
     { 'e', "exposure_absolute", 0, 2047, 1, 250, "exposure_auto", 1, 3},
@@ -231,6 +232,63 @@ int main(int argc, char *argv[])
             {
                 set_speed(ELE, atoi(argv[3]));
                 set_angle(ELE, atoi(argv[2]));
+            }
+            break;
+        default:
+            show_help();
+            goto done;
+        }
+        break;
+
+    case 'z':
+        switch (*++s)
+        {
+        case 0:
+            if (argc < 3)
+            {
+                /* read current value */
+                get_camera_ctl("zoom_absolute");
+            }
+            else
+            {
+                /* set new value */
+                int val = atoi(argv[2]);
+                if ((val >= 100) && (val <= 500))
+                    set_camera_ctl("zoom_absolute", val);
+            }
+            break;
+        case 'r':
+            /* reset zoom */
+            set_camera_ctl("zoom_absolute", 100);
+            set_camera_ctl("tilt_absolute", 0);
+            set_camera_ctl("pan_absolute", 0);
+            break;
+        case 'p':
+            if (argc < 3)
+            {
+                /* read current value */
+                get_camera_ctl("pan_absolute");
+            }
+            else
+            {
+                /* set new value */
+                int val = atoi(argv[2]);
+                if ((val >= -10) && (val <= +10))
+                    set_camera_ctl("pan_absolute", 3600*val);
+            }
+            break;
+        case 't':
+            if (argc < 3)
+            {
+                /* read current value */
+                get_camera_ctl("tilt_absolute");
+            }
+            else
+            {
+                /* set new value */
+                int val = atoi(argv[2]);
+                if ((val >= -10) && (val <= +10))
+                    set_camera_ctl("tilt_absolute", 3600*val);
             }
             break;
         default:
@@ -511,6 +569,12 @@ static void show_help()
         "  cam w [val]              White balance 2000..6500 (4000)\n"
         "  cam f [val]              Focus 0..250 (0)\n"
         "  cam e [val]              Exposure 3..2047 (250)\n"
+        "\n"
+        "Digital zoom, pan and tilt:\n"
+        "  cam z  [val]             Zoom 100 ... 500 (100)\n"
+        "  cam zp [val]             Pan  -10 ... +10  (0)\n"
+        "  cam zt [val]             Tilt -10 ... +10  (0)\n"
+        "  cam zr                   Reset digital zoom, pan and tilt\n"
         "\n"
         "Misc video options:\n"
         "  cam v                    Video options\n"
