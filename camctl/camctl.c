@@ -19,6 +19,7 @@
 typedef struct _v4l2ctl {
     char   cli;   /* camctl cli command */
     char  *cmd;   /* v4l2-ctl command */
+    char  *cmd_auto; /* command to enable/disable auto mode */
     int    min;   /* minimum value */
     int    max;   /* max valiue */
     int    step;  /* step size */
@@ -27,16 +28,16 @@ typedef struct _v4l2ctl {
 
 /* C920 command table */
 static v4l2ctl_t ctltab[] = {
-    { 'b', "brightness", 0, 255, 1, 128 },
-    { 'c', "contrast",   0, 255, 1, 128 },
-    { 's', "saturation", 0, 255, 1, 128 },
-    { 'h', "sharpness",  0, 255, 1, 128 },
-    { 'o', "backlight_compensation", 0, 1, 1, 0},
-    { 'l', "power_line_frequency", 0, 2, 1, 1},
-    { 'g', "gain",       0, 255, 1, 0 },
-    { 'w', "white_balance_temperature", 2000, 6500, 1, 4000},
-    { 'f', "focus_absolute", 0, 250, 5, 0},
-    { 0, "", 0, 0, 0, 0} /* used to find end of array */
+    { 'b', "brightness", NULL, 0, 255, 1, 128 },
+    { 'c', "contrast", NULL,   0, 255, 1, 128 },
+    { 's', "saturation", NULL, 0, 255, 1, 128 },
+    { 'h', "sharpness", NULL,  0, 255, 1, 128 },
+    { 'o', "backlight_compensation", NULL, 0, 1, 1, 0},
+    { 'l', "power_line_frequency", NULL, 0, 2, 1, 1},
+    { 'g', "gain", NULL, 0, 255, 1, 0 },
+    { 'w', "white_balance_temperature", "white_balance_temperature_auto", 2000, 6500, 1, 4000},
+    { 'f', "focus_absolute", "focus_auto", 0, 250, 5, 0},
+    { 0, NULL, NULL, 0, 0, 0, 0} /* used to find end of array */
 };
 
 
@@ -242,6 +243,8 @@ int main(int argc, char *argv[])
     case 'o':
     case 'l':
     case 'g':
+    case 'w':
+    case 'f':
         idx = chr2idx(*s);
         if (idx == -1)
         {
@@ -260,14 +263,33 @@ int main(int argc, char *argv[])
             {
                 /* read current value */
                 get_camera_ctl(ctltab[idx].cmd);
+                if (ctltab[idx].cmd_auto != NULL)
+                    get_camera_ctl(ctltab[idx].cmd_auto);
             }
             else
             {
                 /* set new value */
                 int val = atoi(argv[2]);
-                if ((val >= ctltab[idx].min) && (val <= ctltab[idx].max))
+                if (val == -1)
+                {
+                    /* use auto setting if we have that */
+                    if (ctltab[idx].cmd_auto != NULL)
+                    {
+                        set_camera_ctl(ctltab[idx].cmd_auto, 1);
+                    }
+                    else
+                    {
+                        printf("Command %s does not have 'auto' setting.\n",
+                               ctltab[idx].cmd);
+                    }
+                }
+                else if ((val >= ctltab[idx].min) && (val <= ctltab[idx].max))
                 {
                     set_camera_ctl(ctltab[idx].cmd, val);
+
+                    /* if cmd has 'auto' setting reset it to manual */
+                    if (ctltab[idx].cmd_auto != NULL)
+                        set_camera_ctl(ctltab[idx].cmd_auto, 0);
                 }
             }
             break;
@@ -465,7 +487,7 @@ static void show_help()
         "  cam ma <azi> <sp>        Move to azi at speed sp\n"
         "  cam me <ele> <sp>        Move to ele at speed sp\n"
         "\n"
-        "Get/set image options:\n"
+        "Get/set image options. Use 'r' to reset (e.g. br, cr, ...):\n"
         "  cam b [val]              Brightness 0..255 (128)\n"
         "  cam c [val]              Contrast   0..255 (128)\n"
         "  cam s [val]              Saturation 0..255 (128)\n"
@@ -475,8 +497,8 @@ static void show_help()
         "  cam g [val]              Gain       0..255 (0)\n"
         "\n"
         "Following commands can be set to 'auto' using val=-1:"
-        "  cam w [val]              White balance 2000..6500 (auto)\n"
-        "  cam f [val]              Focus 0..250 (auto)\n"
+        "  cam w [val]              White balance 2000..6500 (-1)\n"
+        "  cam f [val]              Focus 0..250 (-1)\n"
         "\n"
         "  cam v                    Video options\n"
         "  cam vs <width> <height>  Set video frame size\n"
