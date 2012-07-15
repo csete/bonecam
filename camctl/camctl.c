@@ -19,25 +19,29 @@
 typedef struct _v4l2ctl {
     char   cli;   /* camctl cli command */
     char  *cmd;   /* v4l2-ctl command */
-    char  *cmd_auto; /* command to enable/disable auto mode */
     int    min;   /* minimum value */
     int    max;   /* max valiue */
     int    step;  /* step size */
     int    def;   /* default value */
+    char  *cmd_auto; /* command to enable/disable auto mode */
+    int    auto_off; /* value that disable auto mode */
+    int    auto_on;  /* value that enables auto mode */
 } v4l2ctl_t;
 
 /* C920 command table */
 static v4l2ctl_t ctltab[] = {
-    { 'b', "brightness", NULL, 0, 255, 1, 128 },
-    { 'c', "contrast", NULL,   0, 255, 1, 128 },
-    { 's', "saturation", NULL, 0, 255, 1, 128 },
-    { 'h', "sharpness", NULL,  0, 255, 1, 128 },
-    { 'o', "backlight_compensation", NULL, 0, 1, 1, 0},
-    { 'l', "power_line_frequency", NULL, 0, 2, 1, 1},
-    { 'g', "gain", NULL, 0, 255, 1, 0 },
-    { 'w', "white_balance_temperature", "white_balance_temperature_auto", 2000, 6500, 1, 4000},
-    { 'f', "focus_absolute", "focus_auto", 0, 250, 5, 0},
-    { 0, NULL, NULL, 0, 0, 0, 0} /* used to find end of array */
+    { 'b', "brightness", 0, 255, 1, 128, NULL, 0, 0},
+    { 'c', "contrast",   0, 255, 1, 128, NULL, 0, 0},
+    { 's', "saturation", 0, 255, 1, 128, NULL, 0, 0},
+    { 'h', "sharpness",  0, 255, 1, 128, NULL, 0, 0},
+    { 'o', "backlight_compensation", 0, 1, 1, 0, NULL, 0, 0},
+    { 'l', "power_line_frequency", 0, 2, 1, 1, NULL, 0, 0},
+    { 'g', "gain", 0, 255, 1, 0, NULL, 0, 0 },
+    { 'x', "exposure_auto_priority", 0, 1, 1, 1, NULL, 0, 0},
+    { 'w', "white_balance_temperature", 2000, 6500, 1, 4000, "white_balance_temperature_auto", 0, 1},
+    { 'f', "focus_absolute", 0, 250, 5, 0, "focus_auto", 0, 1},
+    { 'e', "exposure_absolute", 0, 2047, 1, 250, "exposure_auto", 1, 3},
+    { 0, NULL, 0, 0, 0, 0, NULL, 0, 0} /* used to find end of array */
 };
 
 
@@ -243,8 +247,10 @@ int main(int argc, char *argv[])
     case 'o':
     case 'l':
     case 'g':
+    case 'x':
     case 'w':
     case 'f':
+    case 'e':
         idx = chr2idx(*s);
         if (idx == -1)
         {
@@ -496,13 +502,15 @@ static void show_help()
         "  cam c [val]              Contrast   0..255 (128)\n"
         "  cam s [val]              Saturation 0..255 (128)\n"
         "  cam h [val]              Sharpness  0..255 (128)\n"
-        "  cam o [val]              Backlight compensation {0,1} (0)\n"
+        "  cam o [0|1]              Backlight compensation {0,1} (0)\n"
         "  cam l [val]              Power line freq. 0..2 (1 ~ 50Hz)\n"
         "  cam g [val]              Gain       0..255 (0)\n"
+        "  cam x [0|1]              Exposure auto priority {0,1} (1)\n"
         "\n"
         "Following commands can be set to 'auto' using val=-1:\n"
-        "  cam w [val]              White balance 2000..6500 (-1)\n"
-        "  cam f [val]              Focus 0..250 (-1)\n"
+        "  cam w [val]              White balance 2000..6500 (4000)\n"
+        "  cam f [val]              Focus 0..250 (0)\n"
+        "  cam e [val]              Exposure 3..2047 (250)\n"
         "\n"
         "Misc video options:\n"
         "  cam v                    Video options\n"
