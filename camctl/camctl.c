@@ -15,6 +15,16 @@
 #define AZI 0
 #define ELE 1
 
+
+typedef struct _v4l2ctl {
+	char  *cmd;
+	int    min;
+	int    max;
+	int    def;
+} v4l2ctl_t;
+
+
+
 #define VIDEO_SERVER_CMD "/home/root/bin/video-server"
 
 static void init_servos();
@@ -349,7 +359,7 @@ static void get_camera_ctl(const char *ctl)
     sprintf(cmd, "v4l2-ctl --get-ctrl=%s", ctl);
     rc = system(cmd);
     if (rc)
-		printf("Get camera ctrl (%s): Not ok\n");
+		printf("Get camera ctrl (%s): Not ok\n", ctl);
 }
 
 /* Show help text. */
@@ -376,6 +386,11 @@ static void show_help()
         "  cam m  <azi> <ele> <sp>  Move to pos. (azi,ele) at speed sp\n"
         "  cam ma <azi> <sp>        Move to azi at speed sp\n"
         "  cam me <ele> <sp>        Move to ele at speed sp\n"
+        "\n"
+        "Image options:\n"
+        "  cam b [val]              Get/set brightness 0..255 (128)\n"
+        "  cam c [val]              Get/set contrast   0..255 (128)\n"
+        "  cam s [val]              Get/set saturation 0..255 (128)\n"
         "\n"
         "  cam v                    Video options\n"
         "  cam vs <width> <height>  Set video frame size\n"
