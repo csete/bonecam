@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
         }
         break;
 
-    case 's':
+    case 'r':
         switch (*++s)
         {
         case 0:
@@ -356,9 +356,9 @@ static void show_help()
         "  cam pa <azi>             Set azi angle\n"
         "  cam pe <ele>             Set ele angle\n"
         "\n"
-        "  cam s  <spa> <spe>       Set azi and ele rotation speeds\n"
-        "  cam sa <sp>              Set azi rotation speed\n"
-        "  cam se <sp>              Set ele rotation speed\n"
+        "  cam r  <spa> <spe>       Set azi and ele rates\n"
+        "  cam ra <sp>              Set azi rotation rate\n"
+        "  cam re <sp>              Set ele rotation rate\n"
         "\n"
         "  cam m  <azi> <ele> <sp>  Move to pos. (azi,ele) at speed sp\n"
         "  cam ma <azi> <sp>        Move to azi at speed sp\n"
