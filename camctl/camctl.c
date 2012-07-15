@@ -255,6 +255,10 @@ int main(int argc, char *argv[])
         switch (*++s)
         {
         case 'r':
+            /* if ctl has 'auto' setting set to manual */
+            if (ctltab[idx].cmd_auto != NULL)
+                set_camera_ctl(ctltab[idx].cmd_auto, 0);
+
             /* reset control to its default value */
             set_camera_ctl(ctltab[idx].cmd, ctltab[idx].def);
             break;
@@ -285,11 +289,11 @@ int main(int argc, char *argv[])
                 }
                 else if ((val >= ctltab[idx].min) && (val <= ctltab[idx].max))
                 {
-                    set_camera_ctl(ctltab[idx].cmd, val);
-
                     /* if cmd has 'auto' setting reset it to manual */
                     if (ctltab[idx].cmd_auto != NULL)
                         set_camera_ctl(ctltab[idx].cmd_auto, 0);
+
+                    set_camera_ctl(ctltab[idx].cmd, val);
                 }
             }
             break;
