@@ -1,4 +1,11 @@
-/* Simple bonecam control interface. */
+/* Simple bonecam control interface.
+ *
+ * Copyright 2012 Alexandru Csete
+ *
+ * May be (ab)used under GNU GPL v3
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
