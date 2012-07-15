@@ -17,20 +17,26 @@
 
 
 typedef struct _v4l2ctl {
-	char   cli;   /* camctl cli command */
-	char  *cmd;   /* v4l2-ctl command */
-	int    min;   /* minimum value */
-	int    max;   /* max valiue */
-	int    step;  /* step size */
-	int    def;   /* default value */
+    char   cli;   /* camctl cli command */
+    char  *cmd;   /* v4l2-ctl command */
+    int    min;   /* minimum value */
+    int    max;   /* max valiue */
+    int    step;  /* step size */
+    int    def;   /* default value */
 } v4l2ctl_t;
 
 /* C920 command table */
 static v4l2ctl_t ctltab[] = {
-	{ 'b', "brightness", 0, 255, 1, 128 },
-	{ 'c', "contrast",   0, 255, 1, 128 },
-	{ 's', "saturation", 0, 255, 1, 128 },
-	{ 0, "", 0, 0, 0, 0} /* used to find end of array */
+    { 'b', "brightness", 0, 255, 1, 128 },
+    { 'c', "contrast",   0, 255, 1, 128 },
+    { 's', "saturation", 0, 255, 1, 128 },
+    { 'h', "sharpness",  0, 255, 1, 128 },
+    { 'o', "backlight_compensation", 0, 1, 1, 0},
+    { 'l', "power_line_frequency", 0, 2, 1, 1},
+    { 'g', "gain",       0, 255, 1, 0 },
+    { 'w', "white_balance_temperature", 2000, 6500, 1, 4000},
+    { 'f', "focus_absolute", 0, 250, 5, 0},
+    { 0, "", 0, 0, 0, 0} /* used to find end of array */
 };
 
 
@@ -228,41 +234,45 @@ int main(int argc, char *argv[])
         }
         break;
 
-	/* camera controls listed in ctltab */
-	case 'b':
-	case 'c':
-	case 's':
+    /* camera controls listed in ctltab */
+    case 'b':
+    case 'c':
+    case 's':
+    case 'h':
+    case 'o':
+    case 'l':
+    case 'g':
         idx = chr2idx(*s);
-		if (idx == -1)
-		{
-			printf("Internal error (v4l2ctl: %c  idx:-1)\n", *s);
-			goto done;
-		}
+        if (idx == -1)
+        {
+            printf("Internal error (v4l2ctl: %c  idx:-1)\n", *s);
+            goto done;
+        }
 
         switch (*++s)
         {
-		case 'r':
-			/* reset control to its default value */
-			set_camera_ctl(ctltab[idx].cmd, ctltab[idx].def);
-			break;
+        case 'r':
+            /* reset control to its default value */
+            set_camera_ctl(ctltab[idx].cmd, ctltab[idx].def);
+            break;
         case 0:
             if (argc < 3)
             {
-				/* read current value */
-				get_camera_ctl(ctltab[idx].cmd);
+                /* read current value */
+                get_camera_ctl(ctltab[idx].cmd);
             }
             else
             {
-				/* set new value */
-				int val = atoi(argv[2]);
-				if ((val >= ctltab[idx].min) && (val <= ctltab[idx].max))
-				{
-					set_camera_ctl(ctltab[idx].cmd, val);
-				}
+                /* set new value */
+                int val = atoi(argv[2]);
+                if ((val >= ctltab[idx].min) && (val <= ctltab[idx].max))
+                {
+                    set_camera_ctl(ctltab[idx].cmd, val);
+                }
             }
             break;
-		}
-		break;
+        }
+        break;
 
     default:
         show_help();
@@ -407,27 +417,27 @@ static void get_camera_ctl(const char *ctl)
     sprintf(cmd, "v4l2-ctl --get-ctrl=%s", ctl);
     rc = system(cmd);
     if (rc)
-		printf("Get camera ctrl (%s): Not ok\n", ctl);
+        printf("Get camera ctrl (%s): Not ok\n", ctl);
 }
 
 /* Given a character c (cli command) find its corresponding
    index in ctltab */
 static int chr2idx(char c)
 {
-	int idx = -1;
-	int i = 0;
+    int idx = -1;
+    int i = 0;
 
-	while (ctltab[i].cli != 0)
-	{
-		if (ctltab[i].cli == c)
-		{
-			idx = i;
-			break;
-		}
+    while (ctltab[i].cli != 0)
+    {
+        if (ctltab[i].cli == c)
+        {
+            idx = i;
+            break;
+        }
         i++;
-	}
+    }
 
-	return idx;
+    return idx;
 }
 
 /* Show help text. */
@@ -455,10 +465,18 @@ static void show_help()
         "  cam ma <azi> <sp>        Move to azi at speed sp\n"
         "  cam me <ele> <sp>        Move to ele at speed sp\n"
         "\n"
-        "Image options:\n"
-        "  cam b [val]              Get/set brightness 0..255 (128)\n"
-        "  cam c [val]              Get/set contrast   0..255 (128)\n"
-        "  cam s [val]              Get/set saturation 0..255 (128)\n"
+        "Get/set image options:\n"
+        "  cam b [val]              Brightness 0..255 (128)\n"
+        "  cam c [val]              Contrast   0..255 (128)\n"
+        "  cam s [val]              Saturation 0..255 (128)\n"
+        "  cam h [val]              Sharpness  0..255 (128)\n"
+        "  cam o [val]              Backlight compensation {0,1} (0)\n"
+        "  cam l [val]              Power line freq. 0..2 (1 ~ 50Hz)\n"
+        "  cam g [val]              Gain       0..255 (0)\n"
+        "\n"
+        "Following commands can be set to 'auto' using val=-1:"
+        "  cam w [val]              White balance 2000..6500 (auto)\n"
+        "  cam f [val]              Focus 0..250 (auto)\n"
         "\n"
         "  cam v                    Video options\n"
         "  cam vs <width> <height>  Set video frame size\n"
