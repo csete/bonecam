@@ -17,12 +17,21 @@
 
 
 typedef struct _v4l2ctl {
-	char  *cmd;
-	int    min;
-	int    max;
-	int    def;
+	char   cli;   /* camctl cli command */
+	char  *cmd;   /* v4l2-ctl command */
+	int    min;   /* minimum value */
+	int    max;   /* max valiue */
+	int    step;  /* step size */
+	int    def;   /* default value */
 } v4l2ctl_t;
 
+/* C920 command table */
+static v4l2ctl_t ctltab[] = {
+	{ 'b', "brightness", 0, 255, 1, 128 },
+	{ 'c', "contrast",   0, 255, 1, 128 },
+	{ 's', "saturation", 0, 255, 1, 128 },
+	{ 0, "", 0, 0, 0, 0} /* used to find end of array */
+};
 
 
 #define VIDEO_SERVER_CMD "/home/root/bin/video-server"
@@ -36,12 +45,15 @@ static void set_camera_ctl(const char *ctl, int val);
 static void set_speed(int servo, int speed);
 static void set_angle(int servo, int angle);
 static void write_tty(const char *tty, const char *data, int len);
+static int  chr2idx(char c);
 static void show_help();
 
 
 int main(int argc, char *argv[])
 {
-    int rc=0;
+    int rc  =  0;
+    int idx = -1;
+
 
     if (argc == 1)
     {
@@ -216,6 +228,42 @@ int main(int argc, char *argv[])
         }
         break;
 
+	/* camera controls listed in ctltab */
+	case 'b':
+	case 'c':
+	case 's':
+        idx = chr2idx(*s);
+		if (idx == -1)
+		{
+			printf("Internal error (v4l2ctl: %c  idx:-1)\n", *s);
+			goto done;
+		}
+
+        switch (*++s)
+        {
+		case 'r':
+			/* reset control to its default value */
+			set_camera_ctl(ctltab[idx].cmd, ctltab[idx].def);
+			break;
+        case 0:
+            if (argc < 3)
+            {
+				/* read current value */
+				get_camera_ctl(ctltab[idx].cmd);
+            }
+            else
+            {
+				/* set new value */
+				int val = atoi(argv[2]);
+				if ((val >= ctltab[idx].min) && (val <= ctltab[idx].max))
+				{
+					set_camera_ctl(ctltab[idx].cmd, val);
+				}
+            }
+            break;
+		}
+		break;
+
     default:
         show_help();
         break;
@@ -360,6 +408,26 @@ static void get_camera_ctl(const char *ctl)
     rc = system(cmd);
     if (rc)
 		printf("Get camera ctrl (%s): Not ok\n", ctl);
+}
+
+/* Given a character c (cli command) find its corresponding
+   index in ctltab */
+static int chr2idx(char c)
+{
+	int idx = -1;
+	int i = 0;
+
+	while (ctltab[i].cli != 0)
+	{
+		if (ctltab[i].cli == c)
+		{
+			idx = i;
+			break;
+		}
+        i++;
+	}
+
+	return idx;
 }
 
 /* Show help text. */
