@@ -24,8 +24,8 @@ typedef struct _v4l2ctl {
     int    step;  /* step size */
     int    def;   /* default value */
     char  *cmd_auto; /* command to enable/disable auto mode */
-    int    auto_off; /* value that disable auto mode */
-    int    auto_on;  /* value that enables auto mode */
+    int    cmd_auto_off; /* value that disable auto mode */
+    int    cmd_auto_on;  /* value that enables auto mode */
 } v4l2ctl_t;
 
 /* C920 command table */
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
         case 'r':
             /* if ctl has 'auto' setting set to manual */
             if (ctltab[idx].cmd_auto != NULL)
-                set_camera_ctl(ctltab[idx].cmd_auto, 0);
+                set_camera_ctl(ctltab[idx].cmd_auto, ctltab[idx].cmd_auto_off);
 
             /* reset control to its default value */
             set_camera_ctl(ctltab[idx].cmd, ctltab[idx].def);
@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
                     /* use auto setting if we have that */
                     if (ctltab[idx].cmd_auto != NULL)
                     {
-                        set_camera_ctl(ctltab[idx].cmd_auto, 1);
+                        set_camera_ctl(ctltab[idx].cmd_auto, ctltab[idx].cmd_auto_on);
                     }
                     else
                     {
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
                 {
                     /* if cmd has 'auto' setting reset it to manual */
                     if (ctltab[idx].cmd_auto != NULL)
-                        set_camera_ctl(ctltab[idx].cmd_auto, 0);
+                        set_camera_ctl(ctltab[idx].cmd_auto, ctltab[idx].cmd_auto_off);
 
                     set_camera_ctl(ctltab[idx].cmd, val);
                 }
