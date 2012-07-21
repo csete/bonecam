@@ -22,6 +22,15 @@
 #define AZI 0
 #define ELE 1
 
+typedef struct _servo_limit {
+	int min;
+	int max;
+} servo_limit_t;
+
+static servo_limit_t srv_lim[] = {
+	{ 0, 180},   /* AZI */
+	{ 60, 130 }  /* ELE */
+};
 
 typedef struct _v4l2ctl {
     char   cli;   /* camctl cli command */
@@ -398,7 +407,7 @@ static void init_servos()
 
     /* set angles */
     set_angle(AZI, 90);
-    set_angle(ELE, 40);
+    set_angle(ELE, 90);
 }
 
 /* Set servo angle */
@@ -406,6 +415,12 @@ static void set_angle(int servo, int angle)
 {
     char cmd[7];
     int data1=0, data2=0;
+
+	/* clamp angles to current physical limits */
+	if (angle > srv_lim[servo].max)
+		angle = srv_lim[servo].max;
+	else if (angle < srv_lim[servo].min)
+		angle = srv_lim[servo].min;
 
     /* The angle goes from 0 to 180:
          0x00 0x00  -  0 degrees
