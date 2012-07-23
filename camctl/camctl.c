@@ -12,7 +12,7 @@
 
 /* defaults */
 #define DEFAULT_TTY       "/dev/ttyO1"
-#define DEFAULT_CLIENT    "mixer"
+#define DEFAULT_CLIENT    "192.168.254.141"
 #define DEFAULT_PORT      "4000"
 #define DEFAULT_WIDTH     1024
 #define DEFAULT_HEIGHT    576
