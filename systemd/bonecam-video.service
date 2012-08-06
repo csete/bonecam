@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Boncam video server
+After=syslog.target network.target
+
+[Service]
+Type=simple
+ExecStart=/home/root/bin/autostart-server.sh
+
+[Install]
+WantedBy=multi-user.target
+
