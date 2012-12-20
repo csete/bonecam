@@ -18,5 +18,12 @@ fi
 
 echo "Starting audio streaming server to $1:$2"
 
+## Vorbis encoded audio
 gst-launch -v -e alsasrc ! audio/x-raw-int,signed=true,rate=24000,channels=2 ! audioconvert ! vorbisenc ! rtpvorbispay ! udpsink host=$1 port=$2
+
+## Raw audio via tcp
+#while true; do
+#    gst-launch -v -e alsasrc ! audio/x-raw-int,endianness=1234,signed=true,width=16,depth=16,rate=48000,channels=1 ! tcpclientsink host=$1 port=$2 sync=true
+#    sleep 5
+#done
 
