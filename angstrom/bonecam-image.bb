@@ -9,19 +9,16 @@ IMAGE_INSTALL += " \
 	task-sdk-target \
 	vim vim-vimrc \
 	procps \
-	beaglebone-tester \
-	screen minicom \
+	screen \
+	minicom \
 	git \
 	led-config \
 	opencv-dev \
 	cronie-systemd ntpdate \
 	nano \
-	minicom \
-	hicolor-icon-theme \
 	gateone \
 	tar \
 	gdb gdbserver \
-	mplayer2 \
 	tslib-tests tslib-calibrate \
 	iproute2 canutils \
 	connman-tests \

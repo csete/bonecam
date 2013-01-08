@@ -8,12 +8,10 @@ You can now apply my pseudo-patches as follows.
 
 Copy bonecam-image.bb to sources/meta-ti/recipes-misc/images/
 Copy gst-plugins-bad_0.10.23.bb to sources/openembedded-core/meta/recipes-multimedia/gstreamer/
-Copy the files from v4l2apps to sources/meta-openembedded/meta-oe/recipes-multimedia/v4l2apps/
 
 You can now try to build the bonecam-image:
 
 MACHINE=beaglebone ./oebb.sh bitbake bonecam-image
-
 
 I realize these are not the right way to do things; however, until I have time to properly understand Ångstrom and Openembedded they will have to do.
 
