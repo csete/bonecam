@@ -4,10 +4,10 @@ Start by checking out the Ångstrom setup scripts according to the instructions 
 http://www.angstrom-distribution.org/building-angstrom
 
 Perform the config and update from Step 2.
-You can now apply my pseudo-patches as follows.
+You can now apply my pseudo-patches as follows:
 
-Copy bonecam-image.bb to sources/meta-ti/recipes-misc/images/
-Copy gst-plugins-bad_0.10.23.bb to sources/openembedded-core/meta/recipes-multimedia/gstreamer/
+(1) Copy bonecam-image.bb to sources/meta-ti/recipes-misc/images/
+(2) Copy gst-plugins-bad_0.10.23.bb to sources/openembedded-core/meta/recipes-multimedia/gstreamer/
 
 You can now try to build the bonecam-image:
 
