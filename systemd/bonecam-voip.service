@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Bonecam intercom client/server
+After=network.target multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/home/root/bin/autostart-voip.sh
+
+[Install]
+#WantedBy=multi-user.target
+
