@@ -145,6 +145,7 @@ config_t* config_create(int argc, char *argv[])
     conf->iframe_period = 10000;
     conf->udp_host = g_strdup("localhost");
     conf->udp_port = 4000;
+    conf->cmd_port = 4242;
 
     /* parse command line options */
     int opt,val;
