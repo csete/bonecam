@@ -4,7 +4,7 @@ After=network.target multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/home/root/bin/autostart-video.sh
+ExecStart=/opt/bonecam/bin/autostart-video.sh
 
 [Install]
 #WantedBy=multi-user.target
