@@ -1,4 +1,4 @@
-Vidsrv is a simple Gstreamer 1.2 application to capture H.264 vidoe from a
+Vidsrv is a simple Gstreamer 1.2 application to capture H.264 video from a
 Logitech C920 camera and stream it to a network host using RTP/UDP.
 
 The following command line options are available:
