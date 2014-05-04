@@ -1,4 +1,5 @@
-capture/capture
-camctl/cam
+vidsrv/vidsrv
+recycle/capture/capture
+recycle/camctl/cam
 *~
 
