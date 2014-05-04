@@ -1,0 +1,2 @@
+gcc -O3 -Wall main.c config.c socket_handler.c video_server.c -o vidsrv \
+    $(pkg-config --cflags --libs gstreamer-1.0 gio-2.0)
