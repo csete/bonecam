@@ -17,9 +17,9 @@ static void show_help()
 {
     static const char *help_message = \
         "\n"
-        "Bonevideo options:\n\n"
+        "Video server options:\n\n"
         "  -d <dev>   Camera device. Default is /dev/video0.\n"
-        "  -s <size>  Image size in WxH format e.g. 1280x720 (default)\n"
+        "  -s <size>  Image size in WxH format e.g. 1280x720 (default).\n"
         "  -f <num>   Frames per second. Range 5 - 30. Default is 24.\n"
         "  -b <num>   Bitrate in kilobits / sec. Range 50 - 15000. Default is 3000.\n"
         "  -i <num>   I-frame period in ms. Range 1000 - 60000. Default is 10000.\n"
