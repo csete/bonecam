@@ -7,5 +7,4 @@ Type=simple
 ExecStart=/opt/bonecam/bin/autostart-video.sh
 
 [Install]
-#WantedBy=multi-user.target
-
+WantedBy=multi-user.target
