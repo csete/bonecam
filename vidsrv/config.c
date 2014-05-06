@@ -188,6 +188,7 @@ config_t* config_create(int argc, char *argv[])
                 conf->udp_port = val;
             else
                 goto help;
+            break;
         case 'c':
             val = atoi(optarg);
             if (val >= 0 && val <= 65535)
