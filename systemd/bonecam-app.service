@@ -1,6 +1,6 @@
 [Unit]
 Description=Run the Boncam video server
-After=network.target multi-user.target
+After=network.target 
 
 [Service]
 Type=simple
