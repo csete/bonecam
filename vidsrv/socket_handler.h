@@ -11,7 +11,8 @@
 
 #include <gio/gio.h>
 
-gboolean socket_callback(GSocketService *service, GSocketConnection * connection,
-                         GObject * source_object, gpointer user_data);
+gboolean        socket_callback(GSocketService * service,
+                                GSocketConnection * connection,
+                                GObject * source_object, gpointer user_data);
 
 #endif

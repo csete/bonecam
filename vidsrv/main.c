@@ -17,11 +17,11 @@
 
 
 /* callback to manage GST messages on D-BUS */
-static gboolean bus_cb(GstBus *bus, GstMessage *msg, gpointer data)
+static gboolean bus_cb(GstBus * bus, GstMessage * msg, gpointer data)
 {
-    GError *error;
-    gchar  *debug;
-    GMainLoop *loop = (GMainLoop *) data;
+    GError         *error;
+    gchar          *debug;
+    GMainLoop      *loop = (GMainLoop *) data;
 
     switch (GST_MESSAGE_TYPE(msg))
     {
@@ -37,7 +37,7 @@ static gboolean bus_cb(GstBus *bus, GstMessage *msg, gpointer data)
         g_printerr("Error: %s\n", error->message);
         g_error_free(error);
 
-        g_main_loop_quit (loop);
+        g_main_loop_quit(loop);
         break;
 
     default:
@@ -52,7 +52,7 @@ static gboolean bus_cb(GstBus *bus, GstMessage *msg, gpointer data)
 static gboolean signal_handler(gpointer data)
 {
     fprintf(stderr, "Received termination signal\n");
-    g_main_loop_quit((GMainLoop *)data);
+    g_main_loop_quit((GMainLoop *) data);
 
     return FALSE;
 }
@@ -60,22 +60,22 @@ static gboolean signal_handler(gpointer data)
 
 int main(int argc, char *argv[])
 {
-    GMainLoop*       main_loop;
-    GSocketService*  socket;
-    GError*          error = NULL;
+    GMainLoop      *main_loop;
+    GSocketService *socket;
+    GError         *error = NULL;
 
-    GstBus *bus;
-    guint bus_watch_id;
+    GstBus         *bus;
+    guint           bus_watch_id;
 
-    config_t * conf;
-    video_server_t* server;
+    config_t       *conf;
+    video_server_t *server;
 
-    guint major = glib_major_version;
-    guint minor = glib_minor_version;
-    guint micro = glib_micro_version;
-    guint nano = 0;
-    fprintf(stderr, "Glib version %d.%d.%d\n",
-            major, minor, micro);
+    guint           major = glib_major_version;
+    guint           minor = glib_minor_version;
+    guint           micro = glib_micro_version;
+    guint           nano = 0;
+
+    fprintf(stderr, "Glib version %d.%d.%d\n", major, minor, micro);
 
     /* initialise gsatreamer */
     gst_init(&argc, &argv);
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
     conf = config_create(argc, argv);
     server = video_server_create(conf);
-    main_loop = g_main_loop_new (NULL, FALSE);
+    main_loop = g_main_loop_new(NULL, FALSE);
     g_unix_signal_add(SIGHUP, signal_handler, main_loop);
     g_unix_signal_add(SIGTERM, signal_handler, main_loop);
     g_unix_signal_add(SIGINT, signal_handler, main_loop);
@@ -121,9 +121,9 @@ int main(int argc, char *argv[])
     fprintf(stderr, "Deleting pipeline\n");
 
     video_server_delete(server);
-    
+
     g_source_remove(bus_watch_id);
     g_main_loop_unref(main_loop);
-    
+
     return 0;
 }

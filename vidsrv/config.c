@@ -15,7 +15,7 @@
 
 static void show_help()
 {
-    static const char *help_message = \
+    static const char *help_message =
         "\n"
         "Video server options:\n\n"
         "  -d <dev>   Camera device. Default is /dev/video0.\n"
@@ -32,8 +32,7 @@ static void show_help()
         "For example:\n"
         "  v4l2-ctl --set-ctrl=focus_auto=0\n"
         "  v4l2-ctl --set-ctrl=focus_absolute=0\n"
-        "\n"
-        "Use 'v4l2-ctl -l' for a list of supported settings\n";
+        "\n" "Use 'v4l2-ctl -l' for a list of supported settings\n";
 
     fprintf(stderr, "%s", help_message);
 }
@@ -43,7 +42,7 @@ static void show_help()
  */
 static int size_is_ok(guint64 width, guint64 height)
 {
-    int sizeok = 0;
+    int             sizeok = 0;
 
     switch (width)
     {
@@ -96,17 +95,17 @@ static int size_is_ok(guint64 width, guint64 height)
 }
 
 /* Extract frame size from string in the format 1280x720 */
-void get_frame_size(const gchar *optarg, config_t* conf)
+void get_frame_size(const gchar * optarg, config_t * conf)
 {
-    gchar **size_vec = g_strsplit(optarg, "x", 0);
+    gchar         **size_vec = g_strsplit(optarg, "x", 0);
 
-    guint64 w = g_ascii_strtoull(size_vec[0], NULL, 0);
-    guint64 h = g_ascii_strtoull(size_vec[1], NULL, 0);
+    guint64         w = g_ascii_strtoull(size_vec[0], NULL, 0);
+    guint64         h = g_ascii_strtoull(size_vec[1], NULL, 0);
 
     if (size_is_ok(w, h))
     {
-        conf->width = (unsigned int) w;
-        conf->height = (unsigned int) h;
+        conf->width = (unsigned int)w;
+        conf->height = (unsigned int)h;
     }
 
     g_strfreev(size_vec);
@@ -114,7 +113,7 @@ void get_frame_size(const gchar *optarg, config_t* conf)
 
 unsigned int get_closest_framerate(int val)
 {
-    unsigned int fps = 24;
+    unsigned int    fps = 24;
 
     if (val < 8)
         fps = 5;
@@ -132,9 +131,9 @@ unsigned int get_closest_framerate(int val)
     return fps;
 }
 
-config_t* config_create(int argc, char *argv[])
+config_t       *config_create(int argc, char *argv[])
 {
-    config_t* conf = malloc(sizeof(config_t));
+    config_t       *conf = malloc(sizeof(config_t));
 
     /* add sensible defaults */
     conf->device = g_strdup("/dev/video0");
@@ -148,7 +147,8 @@ config_t* config_create(int argc, char *argv[])
     conf->cmd_port = 4242;
 
     /* parse command line options */
-    int opt,val;
+    int             opt, val;
+
     while ((opt = getopt(argc, argv, "d:s:f:b:i:a:p:h")) != -1)
     {
         switch (opt)
@@ -205,14 +205,14 @@ config_t* config_create(int argc, char *argv[])
 
     return conf;
 
-help:
+  help:
     show_help();
     config_destroy(conf);
     exit(EXIT_FAILURE);
 }
 
 
-void config_destroy(config_t* conf)
+void config_destroy(config_t * conf)
 {
     if (conf->device != NULL)
         g_free(conf->device);

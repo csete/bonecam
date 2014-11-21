@@ -13,7 +13,7 @@
 
 
 /* Creates the uvch264src element */
-static void create_input_source(video_server_t* server, const config_t* conf)
+static void create_input_source(video_server_t * server, const config_t * conf)
 {
     server->source = gst_element_factory_make("uvch264src", "video-source");
 
@@ -27,52 +27,47 @@ static void create_input_source(video_server_t* server, const config_t* conf)
     g_object_set(G_OBJECT(server->source),
                  "initial-bitrate", 1000 * conf->bitrate,
                  "average-bitrate", 1000 * conf->bitrate,
-                 "iframe-period", conf->iframe_period,
-                 NULL);
+                 "iframe-period", conf->iframe_period, NULL);
 
     /* misc settings */
-    g_object_set(G_OBJECT(server->source),
-                 "auto-start", TRUE,
-                 NULL);
+    g_object_set(G_OBJECT(server->source), "auto-start", TRUE, NULL);
 
 }
 
 /* Creates the UDP sink */
-static void create_udp_sink(video_server_t* server, const config_t* conf)
+static void create_udp_sink(video_server_t * server, const config_t * conf)
 {
     server->udpsink = gst_element_factory_make("udpsink", "video-udpsink");
     if (conf->udp_host != NULL)
         g_object_set(G_OBJECT(server->udpsink),
-                     "host", conf->udp_host,
-                     "port", conf->udp_port, NULL);
+                     "host", conf->udp_host, "port", conf->udp_port, NULL);
     else
         g_object_set(G_OBJECT(server->udpsink),
-                     "host", "localhost",
-                     "port", conf->udp_port, NULL);
+                     "host", "localhost", "port", conf->udp_port, NULL);
 }
 
-static void create_h264_caps(video_server_t* server, const config_t* conf)
+static void create_h264_caps(video_server_t * server, const config_t * conf)
 {
     server->h264caps = gst_caps_new_simple("video/x-h264",
-                           "width", G_TYPE_INT, conf->width,
-                           "height", G_TYPE_INT, conf->height,
-                           "framerate", GST_TYPE_FRACTION, conf->framerate, 1,
-                           NULL);
+                                           "width", G_TYPE_INT, conf->width,
+                                           "height", G_TYPE_INT, conf->height,
+                                           "framerate", GST_TYPE_FRACTION,
+                                           conf->framerate, 1, NULL);
 }
 
-video_server_t * video_server_create(config_t *conf)
+video_server_t *video_server_create(config_t * conf)
 {
-    video_server_t * server = (video_server_t *)malloc(sizeof(video_server_t));
+    video_server_t *server = (video_server_t *) malloc(sizeof(video_server_t));
 
 
     /* Create gstreamer elements */
-    server->pipeline  = gst_pipeline_new("bonecam-video");
+    server->pipeline = gst_pipeline_new("bonecam-video");
 
     create_input_source(server, conf);
     create_h264_caps(server, conf);
 
     server->vqueue = gst_element_factory_make("queue", "video-queue");
-    server->parser = gst_element_factory_make("h264parse",  "video-parser");
+    server->parser = gst_element_factory_make("h264parse", "video-parser");
     server->payloader = gst_element_factory_make("rtph264pay", "video-rtppay");
 
     create_udp_sink(server, conf);
@@ -94,8 +89,7 @@ video_server_t * video_server_create(config_t *conf)
     gst_element_link_pads(server->source, "vidsrc", server->vqueue, "sink");
 
     if (!gst_element_link_filtered(server->vqueue,
-                                   server->parser,
-                                   server->h264caps))
+                                   server->parser, server->h264caps))
     {
         fprintf(stderr, "%s: Failed to link elements\n", __func__);
     }
@@ -129,12 +123,12 @@ void video_server_set_bitrate(video_server_t * server, unsigned int value)
         server->conf->bitrate = value;
         g_object_set(G_OBJECT(server->source),
                      "initial-bitrate", 1000 * value,
-                     "average-bitrate", 1000 * value,
-                     NULL);
+                     "average-bitrate", 1000 * value, NULL);
     }
 }
 
-void video_server_set_iframe_period(video_server_t * server, unsigned int value)
+void video_server_set_iframe_period(video_server_t * server,
+                                    unsigned int value)
 {
     if (value >= 1000 && value <= 60000)
     {
@@ -145,8 +139,7 @@ void video_server_set_iframe_period(video_server_t * server, unsigned int value)
         g_object_set(G_OBJECT(server->source),
                      "initial-bitrate", 1000 * server->conf->bitrate,
                      "average-bitrate", 1000 * server->conf->bitrate,
-                     "iframe-period", value,
-                     NULL);
+                     "iframe-period", value, NULL);
         fprintf(stderr, "Video server ready -> playing\n");
         gst_element_set_state(server->pipeline, GST_STATE_PLAYING);
     }
@@ -160,8 +153,8 @@ void video_server_set_framerate(video_server_t * server, unsigned int value)
     gst_element_set_state(server->pipeline, GST_STATE_READY);
     fprintf(stderr, "New video framerate: %d fps\n", server->conf->framerate);
     gst_caps_set_simple(GST_CAPS(server->h264caps),
-                        "framerate", GST_TYPE_FRACTION, server->conf->framerate, 1,
-                        NULL);
+                        "framerate", GST_TYPE_FRACTION,
+                        server->conf->framerate, 1, NULL);
     fprintf(stderr, "Video server ready -> playing\n");
     gst_element_set_state(server->pipeline, GST_STATE_PLAYING);
 
@@ -176,8 +169,7 @@ void video_server_reset_frame_size(video_server_t * server)
             server->conf->width, server->conf->height);
     gst_caps_set_simple(GST_CAPS(server->h264caps),
                         "width", G_TYPE_INT, server->conf->width,
-                        "height", G_TYPE_INT, server->conf->height,
-                        NULL);
+                        "height", G_TYPE_INT, server->conf->height, NULL);
     fprintf(stderr, "Video server ready -> playing\n");
     gst_element_set_state(server->pipeline, GST_STATE_PLAYING);
 }
