@@ -19,11 +19,11 @@ APT::Install-Suggests "0";
 
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get install ntp
+sudo apt-get install ntp time 
 sudo apt-get install vim make gcc g++ pkg-config python ccache
 sudo apt-get install autoconf automake libtool intltool autopoint bison flex
 sudo apt-get install libglib2.0-dev libvorbis-dev libv4l-dev v4l-utils
-sudo apt-get install gtk-doc-tools libasound2-dev libjpeg-dev libpng12-dev
+sudo apt-get install gtk-doc-tools alsa-utils libasound2-dev libjpeg-dev libpng12-dev
 
 For uvch264src:
 sudo apt-get install libusb-1.0-0-dev libgudev-1.0-dev
