@@ -12,7 +12,7 @@
 
 usage ()
 {
-    echo "Usage:  audio-server <host_ip> <host_port>"
+    echo "Usage:  audiosrv <host_ip> <host_port>"
 }
 
 
@@ -23,15 +23,16 @@ fi
 
 echo "Starting audio streaming server to $1:$2"
 
-. /home/debian/setup_env.sh
+## Opus encoded audio (C920 does 1 channel 32 kHz)
+/opt/bonecam/gst-launch-1.0 -v -e alsasrc device="plughw:1" ! \
+    audio/x-raw, format=\(string\)S16LE, rate=32000, channels=1 ! \
+    audioresample ! \
+    audio/x-raw, format=\(string\)S16LE, rate=48000, channels=1 ! \
+    opusenc bandwidth=1103 bitrate=16000 frame-size=20 complexity=5 ! \
+    rtpopuspay ! udpsink host=$1 port=$2
 
 ## Vorbis encoded audio
-gst-launch-1.0 -v -e alsasrc device="plughw:1" ! audio/x-raw,format=\(string\)S16LE,rate=44100,channels=1 ! audioconvert ! vorbisenc ! rtpvorbispay ! udpsink host=$1 port=$2
-
-
-## Raw audio via tcp
-#while true; do
-#    gst-launch-1.0 -v -e alsasrc device="plughw:1" ! audio/x-raw,format=\(string\)S16LE,rate=48000,channels=1 ! tcpclientsink host=$1 port=$2 sync=true
-#    sleep 5
-#done
+#/opt/bonecam/gst-launch-1.0 -v -e alsasrc device="plughw:1" ! \
+#    audio/x-raw,format=\(string\)S16LE,rate=44100,channels=1 ! \
+#    audioconvert ! vorbisenc ! rtpvorbispay ! udpsink host=$1 port=$2
 
