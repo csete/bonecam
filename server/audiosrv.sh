@@ -28,7 +28,7 @@ echo "Starting audio streaming server to $1:$2"
     audio/x-raw, format=\(string\)S16LE, rate=32000, channels=1 ! \
     audioresample ! \
     audio/x-raw, format=\(string\)S16LE, rate=48000, channels=1 ! \
-    opusenc bandwidth=1103 bitrate=16000 frame-size=20 complexity=5 ! \
+    opusenc bandwidth=1103 bitrate=32000 frame-size=40 complexity=3 ! \
     rtpopuspay ! udpsink host=$1 port=$2
 
 ## Vorbis encoded audio
