@@ -1,17 +1,20 @@
-Systemd files to start the camera software automatically. Based on the
-tutorial by Nuno Alves: http://www.nunoalves.com/open_source/?p=308
+Systemd files to start the camera software automatically. 
 
-Assuming that the vidsrv and audiosrc applications are located in
+Assuming that the vidsrv and audiosrv applications are located in
 /opt/bonecam/bin/
 
 Copy bonecam-app.sh to /opt/bonecam/bin/
 Copy bonecam-app.service to /lib/systemd/system/
 
-cd /etc/systemd/system/
-ln -s /lib/systemd/system/bonecam-app.service bonecam-app.service
+Reload the systemd service database:
 
-Finally, activate the service and enable the service to be started on boot-up:
-systemctl daemon-reload
-systemctl start  bonecam-app.service
-systemctl enable bonecam-app.service
+  systemctl daemon-reload
 
+You can now use:
+systemctl start   bonecam-app.service
+systemctl stop    bonecam-app.service
+systemctl enable  bonecam-app.service
+systemctl disable bonecam-app.service
+
+Enabling the service wil lensure that it is started automatically at boot.
+Disabling it will prevent the service to be started at boot.

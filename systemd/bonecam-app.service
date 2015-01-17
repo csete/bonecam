@@ -1,10 +1,15 @@
 [Unit]
-Description=Run the Boncam video server
-After=network.target 
+Description=Bonecam A/V server
+After=network-online.target 
 
 [Service]
 Type=simple
 ExecStart=/opt/bonecam/bin/bonecam-app.sh
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=bonecam
+Restart=on-failure
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
