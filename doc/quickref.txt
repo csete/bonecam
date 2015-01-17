@@ -12,6 +12,7 @@ Network settings:
 Camera application is started using a systemd service:
 /etc/systemd/system/bonecam-app.service
 
+sudo systemctl --system daemon-reload
 sudo systemctl start   bonecam-app.service
 sudo systemctl stop    bonecam-app.service
 sudo systemctl enable  bonecam-app.service
