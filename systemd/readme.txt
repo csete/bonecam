@@ -4,7 +4,7 @@ Assuming that the vidsrv and audiosrv applications are located in
 /opt/bonecam/bin/
 
 Copy bonecam-app.sh to /opt/bonecam/bin/
-Copy bonecam-app.service to /lib/systemd/system/
+Copy bonecam-app.service to /etc/systemd/system/
 
 Reload the systemd service database:
 
