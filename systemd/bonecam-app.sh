@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # start video server
-/opt/bonecam/bin/vidsrv -a 192.168.254.22 -p 9040  &
+/opt/bonecam/bin/vidsrv.sh dest_ip dest_port  &
 # NB: Remove the trailing "&" above if the audio is disabled
 
 # start audio
-exec /opt/bonecam/bin/audiosrv 192.168.254.22 9100 > $AUDLOG 2>&1
+exec /opt/bonecam/bin/audiosrv.sh dest_ip dest_port
+
