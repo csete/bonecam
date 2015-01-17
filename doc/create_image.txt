@@ -1,0 +1,52 @@
+Bonecam v2.1 image
+
+Create an SD card based on:
+http://elinux.org/Beagleboard:BeagleBoneBlack_Debian
+Tested:
+ * 2014-11-11
+
+Update:
+/etc/hostname
+/etc/hosts
+/etc/issue
+/etc/issue.net
+/home/debian/.bashrc
+/root/.bashrc
+
+Create /etc/apt/apt.conf containing:
+APT::Install-Recommends "0";
+APT::Install-Suggests "0";
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install ntp
+sudo apt-get install vim make gcc g++ pkg-config python ccache
+sudo apt-get install autoconf automake libtool intltool autopoint bison flex
+sudo apt-get install libglib2.0-dev libvorbis-dev libv4l-dev v4l-utils
+sudo apt-get install gtk-doc-tools libasound2-dev libjpeg-dev libpng12-dev
+
+For uvch264src:
+sudo apt-get install libusb-1.0-0-dev libgudev-1.0-dev
+
+
+Create the set_env.sh:
+PFX=/opt/bonecam
+export PATH=$PATH:$PFX/bin
+export LD_RUN_PATH=$LD_RUN_PATH:$PFX/lib
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$PFX/lib/pkgconfig
+export GST_PLUGIN_PATH=$PFX/lib/gstreamer-1.0
+
+
+Build and install ORC:
+  http://gstreamer.freedesktop.org/src/orc/
+
+Build and install Opus:
+  http://downloads.xiph.org/releases/opus/opus-1.1.tar.gz
+
+Build and install
+  gstreamer
+  gst-plugins-base
+  gst-plugins-good
+  gst-plugins-bad
+
+--prefix=/opt/bonecam --enable-gtk-doc=no --enable-gtk-doc-html=no --enable-gtk-doc-pdf=no

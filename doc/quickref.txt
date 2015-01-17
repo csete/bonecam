@@ -1,0 +1,27 @@
+Bonecam v2.1 quick reference
+
+Login through ssh or serial console.
+Username: debian
+Password: temppwd
+
+Network settings:
+/etc/network/interfaces
+/etc/hostname
+/etc/hosts
+
+Camera application is started using a systemd service:
+/etc/systemd/system/bonecam-app.service
+
+sudo systemctl start   bonecam-app.service
+sudo systemctl stop    bonecam-app.service
+sudo systemctl enable  bonecam-app.service
+sudo systemctl disable bonecam-app.service
+
+The bonecam-app.service executes the /opt/bonecam/bin/bonecam-app.sh script.
+This is the script that launches gstreamer pipelines, applications, etc.
+
+/opt/bonecam is also the prefix where gstreamer is installed.
+/opt/bonecam/set_env.sh can be sourced if any on-target devlopment or testing
+is to be performed.
+
+The sources are located in /home/debian
