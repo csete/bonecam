@@ -24,7 +24,7 @@ fi
 echo "Starting audio streaming server to $1:$2"
 
 ## Opus encoded audio (C920 does 1 channel 32 kHz)
-/opt/bonecam/gst-launch-1.0 -v -e alsasrc device="plughw:1" ! \
+/opt/bonecam/bin/gst-launch-1.0 -v -e alsasrc device="plughw:1" ! \
     audio/x-raw, format=\(string\)S16LE, rate=32000, channels=1 ! \
     audioresample ! \
     audio/x-raw, format=\(string\)S16LE, rate=48000, channels=1 ! \
@@ -32,7 +32,7 @@ echo "Starting audio streaming server to $1:$2"
     rtpopuspay ! udpsink host=$1 port=$2
 
 ## Vorbis encoded audio
-#/opt/bonecam/gst-launch-1.0 -v -e alsasrc device="plughw:1" ! \
+#/opt/bonecam/bin/gst-launch-1.0 -v -e alsasrc device="plughw:1" ! \
 #    audio/x-raw,format=\(string\)S16LE,rate=44100,channels=1 ! \
 #    audioconvert ! vorbisenc ! rtpvorbispay ! udpsink host=$1 port=$2
 
